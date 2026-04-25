@@ -43,17 +43,39 @@ html, body {
   100% { transform: translate(-50%, -50%) scale(1)    rotate(var(--rot, 0deg)); opacity: 1; }
 }
 
-@keyframes spin-slow { to { transform: rotate(360deg); } }
-
 .tofu {
   position: absolute;
   --rot: 0deg;
   animation: pop-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   pointer-events: auto;
   cursor: pointer;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.45));
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.55));
   will-change: transform;
+  perspective: 900px;
 }
+
+.cube {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 18%;
+  backface-visibility: hidden;
+}
+
+/* All faces translate by half their thickness in 3D so they form a unit cube. */
+.face.front  { transform: translateZ(calc(var(--size, 50px) * 0.5)); }
+.face.back   { transform: rotateY(180deg) translateZ(calc(var(--size, 50px) * 0.5)); }
+.face.left   { transform: rotateY(-90deg) translateZ(calc(var(--size, 50px) * 0.5)); }
+.face.right  { transform: rotateY(90deg)  translateZ(calc(var(--size, 50px) * 0.5)); }
+.face.top    { transform: rotateX(90deg)  translateZ(calc(var(--size, 50px) * 0.5)); }
+.face.bottom { transform: rotateX(-90deg) translateZ(calc(var(--size, 50px) * 0.5)); }
 
 /* ───────── 文字 ───────── */
 

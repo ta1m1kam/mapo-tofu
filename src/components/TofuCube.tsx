@@ -2,81 +2,68 @@ import type { JSX } from 'solid-js';
 
 type Props = {
   size: number;
+  /** in-plane (z-axis) rotation of the wrapper */
   rotation: number;
+  /** 3D rotateX in degrees (typical: -40 to -15) */
+  rotateX: number;
+  /** 3D rotateY in degrees (typical: 20 to 70) */
+  rotateY: number;
   x: number;
   y: number;
   hue?: 'cream' | 'gold' | 'pink';
-  spinSpeed?: number;
-  delay?: number;
   seed?: number;
 };
 
-// Isometric face palettes — stroke-less; depth comes purely from face shading.
-const SKIN: Record<NonNullable<Props['hue']>, { top: string; left: string; right: string }> = {
-  cream: { top: '#fdf8e8', left: '#ebe0bf', right: '#bda77a' },
-  gold:  { top: '#fff5d6', left: '#ecd49a', right: '#a98855' },
-  pink:  { top: '#fff1ea', left: '#e9cfc4', right: '#b88577' },
+const SKIN: Record<NonNullable<Props['hue']>, { top: string; side: string; back: string }> = {
+  cream: { top: '#fdf8e8', side: '#ebdcb6', back: '#9d8a5a' },
+  gold:  { top: '#fff5d0', side: '#ecd49a', back: '#9c7c45' },
+  pink:  { top: '#fff1ea', side: '#e9cfc4', back: '#9d6f5e' },
 };
 
 export function TofuCube(props: Props): JSX.Element {
   const skin = () => SKIN[props.hue ?? 'cream'];
-  const seed = () => props.seed ?? 0;
-
-  const innerStyle = (): JSX.CSSProperties => ({
-    width: '100%',
-    height: '100%',
-    animation: props.spinSpeed
-      ? `spin-slow ${props.spinSpeed}s linear infinite`
-      : undefined,
-    'animation-delay': props.delay ? `${props.delay}s` : undefined,
-  });
 
   const wrapStyle = (): JSX.CSSProperties => ({
-    left: `${props.x}%`,
-    top: `${props.y}%`,
-    width: `${props.size}px`,
+    left:  `${props.x}%`,
+    top:   `${props.y}%`,
+    width:  `${props.size}px`,
     height: `${props.size}px`,
-    '--rot': `${props.rotation}deg`,
+    '--rot':  `${props.rotation}deg`,
+    '--size': `${props.size}px`,
     transform: `translate(-50%, -50%) rotate(${props.rotation}deg)`,
+  });
+
+  const cubeStyle = (): JSX.CSSProperties => ({
+    transform: `rotateX(${props.rotateX}deg) rotateY(${props.rotateY}deg)`,
   });
 
   return (
     <div class="tofu" style={wrapStyle()}>
-      <div style={innerStyle()}>
-        <svg viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
-          <defs>
-            <filter id={`s-${seed()}`} x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#0a0202" flood-opacity="0.5"/>
-            </filter>
-            {/* gradients to give each face a subtle in-face shading */}
-            <linearGradient id={`gt-${seed()}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.85"/>
-              <stop offset="100%" stop-color={skin().top} stop-opacity="0"/>
-            </linearGradient>
-            <linearGradient id={`gl-${seed()}`} x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%"   stop-color={skin().left} stop-opacity="1"/>
-              <stop offset="100%" stop-color="#000000"     stop-opacity="0.08"/>
-            </linearGradient>
-            <linearGradient id={`gr-${seed()}`} x1="1" y1="0" x2="0" y2="0">
-              <stop offset="0%"   stop-color={skin().right} stop-opacity="1"/>
-              <stop offset="100%" stop-color="#000000"      stop-opacity="0.0"/>
-            </linearGradient>
-          </defs>
-
-          <g filter={`url(#s-${seed()})`}>
-            {/* TOP face */}
-            <polygon points="50,12 90,35 50,58 10,35" fill={skin().top}/>
-            <polygon points="50,12 90,35 50,58 10,35" fill={`url(#gt-${seed()})`}/>
-
-            {/* LEFT face */}
-            <polygon points="10,35 50,58 50,92 10,69" fill={skin().left}/>
-            <polygon points="10,35 50,58 50,92 10,69" fill={`url(#gl-${seed()})`}/>
-
-            {/* RIGHT face — darkest, gives depth */}
-            <polygon points="90,35 50,58 50,92 90,69" fill={skin().right}/>
-            <polygon points="90,35 50,58 50,92 90,69" fill={`url(#gr-${seed()})`}/>
-          </g>
-        </svg>
+      <div class="cube" style={cubeStyle()}>
+        <span
+          class="face top"
+          style={{ background: `linear-gradient(135deg, #ffffff 0%, ${skin().top} 60%, ${skin().side} 100%)` }}
+        />
+        <span
+          class="face bottom"
+          style={{ background: skin().back }}
+        />
+        <span
+          class="face front"
+          style={{ background: `linear-gradient(180deg, ${skin().top} 0%, ${skin().side} 100%)` }}
+        />
+        <span
+          class="face back"
+          style={{ background: skin().back }}
+        />
+        <span
+          class="face left"
+          style={{ background: `linear-gradient(90deg, ${skin().back} 0%, ${skin().side} 100%)` }}
+        />
+        <span
+          class="face right"
+          style={{ background: `linear-gradient(270deg, ${skin().back} 0%, ${skin().side} 100%)` }}
+        />
       </div>
     </div>
   );

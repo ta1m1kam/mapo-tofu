@@ -13,8 +13,10 @@ function randomTofu(id: number): Tofu {
     y: 10 + Math.random() * 80,
     size,
     rotation: (Math.random() - 0.5) * 14,
+    // 3D angle variance: each tofu shows top + 2 sides at slightly different orientation
+    rotateX: -(18 + Math.random() * 22),     // -18° ~ -40° (tilt forward)
+    rotateY:   20 + Math.random() * 50,      //  20° ~ 70°  (rotate around vertical)
     hue: HUES[Math.floor(Math.random() * HUES.length)],
-    spinSpeed: 0,
     bornAt: performance.now(),
   };
 }
