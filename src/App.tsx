@@ -1,5 +1,6 @@
 import { createSignal, onCleanup, onMount } from 'solid-js';
 import { Bowl, type Tofu } from './components/Bowl';
+import { ensureAudio, playDrop, startSizzle } from './audio';
 
 const HUES: Tofu['hue'][] = ['cream', 'gold', 'pink'];
 const SPAWN_INTERVAL_MS = 600;
@@ -33,11 +34,14 @@ export function App() {
   let shakeBlocked = false;
 
   function spawnOne() {
+    const tofu = randomTofu(nextId++);
     setTofus((prev) => {
-      const next = [...prev, randomTofu(nextId++)];
+      const next = [...prev, tofu];
       if (next.length > MAX_VISIBLE_TOFU) next.shift();
       return next;
     });
+    // drop-in アニメの「着地」フレームに合わせて遅延 (~0.5s)
+    setTimeout(() => playDrop(tofu.size), 500);
   }
 
   function clearAll() {
@@ -79,9 +83,11 @@ export function App() {
   onMount(() => {
     const spawnTimer = setInterval(spawnOne, SPAWN_INTERVAL_MS);
 
-    // iOS 13+ requires a user gesture to grant motion permission
+    // iOS 13+ requires a user gesture to grant motion permission AND
+    // to enable AudioContext. Both done on first interaction.
     const grantOnce = () => {
       void ensureMotionPermission();
+      void ensureAudio().then(() => startSizzle());
       window.removeEventListener('pointerdown', grantOnce);
     };
     window.addEventListener('pointerdown', grantOnce);
