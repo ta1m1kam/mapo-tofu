@@ -21,16 +21,20 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  /* 実物の麻婆豆腐ソース色 — 茶色ベース、わずかに油の艶 */
+  /* 灼熱の麻婆豆腐 — 紅蓮の辣油、燃える hot spot */
   background:
-    /* ソースの艶 (上の控えめなハイライト) */
-    radial-gradient(ellipse 50% 30% at 50% 20%, rgba(184, 96, 40, 0.12) 0%, transparent 70%),
-    /* 油の hot spot */
-    radial-gradient(ellipse 35% 25% at 75% 35%, rgba(184, 64, 28, 0.10) 0%, transparent 70%),
+    /* 上端の灼熱ハイライト */
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 140, 60, 0.32) 0%, transparent 70%),
+    /* 右上の燃える油溜まり */
+    radial-gradient(ellipse 50% 38% at 78% 22%, rgba(232, 70, 22, 0.45) 0%, rgba(180, 40, 10, 0.18) 50%, transparent 75%),
+    /* 左中の hot spot */
+    radial-gradient(ellipse 45% 35% at 18% 58%, rgba(255, 90, 30, 0.28) 0%, transparent 70%),
+    /* 中央下のエネルギー */
+    radial-gradient(ellipse 60% 40% at 50% 78%, rgba(220, 60, 18, 0.30) 0%, transparent 70%),
     /* 深い底 */
-    radial-gradient(ellipse 80% 60% at 50% 100%, #1f1208 0%, transparent 70%),
-    /* base 茶褐色 */
-    radial-gradient(ellipse at 50% 50%, #4a2810 0%, #2a1808 60%, #1a0e04 100%);
+    radial-gradient(ellipse 90% 70% at 50% 100%, #2a0a02 0%, transparent 70%),
+    /* base 紅褐色（灼熱寄り） */
+    radial-gradient(ellipse at 50% 50%, #6a1a08 0%, #4a1004 50%, #2a0a02 100%);
   font-family: 'Noto Serif JP', 'Yu Mincho', 'Hiragino Mincho ProN', serif;
   font-weight: 200;
   color: var(--ink);
@@ -39,17 +43,36 @@ html, body {
   letter-spacing: 0.04em;
 }
 
-/* ソースの艶がゆっくり動く */
+/* ソースの艶が脈打つ — 灼熱が呼吸する */
 body::before {
   content: '';
   position: fixed;
   inset: -10%;
   background:
-    radial-gradient(circle at 20% 30%, rgba(184, 96, 40, 0.06) 0%, transparent 30%),
-    radial-gradient(circle at 80% 70%, rgba(160, 80, 36, 0.05) 0%, transparent 35%);
-  animation: oil-drift 22s ease-in-out infinite alternate;
+    radial-gradient(circle at 20% 30%, rgba(255, 130, 50, 0.18) 0%, transparent 32%),
+    radial-gradient(circle at 80% 70%, rgba(232, 80, 24, 0.14) 0%, transparent 38%),
+    radial-gradient(circle at 40% 80%, rgba(255, 100, 30, 0.10) 0%, transparent 30%);
+  animation: oil-drift 18s ease-in-out infinite alternate;
   pointer-events: none;
   z-index: 0;
+  mix-blend-mode: screen;
+}
+
+/* 上端のグロー帯がゆらゆら */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 40% at 50% -10%, rgba(255, 160, 70, 0.20) 0%, transparent 60%);
+  animation: glow-pulse 4s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes glow-pulse {
+  0%   { opacity: 0.6; }
+  100% { opacity: 1.0; }
 }
 
 @keyframes oil-drift {
@@ -64,23 +87,65 @@ body::before {
 }
 
 
-/* ───────── 豆腐: 静かな pop-in ───────── */
+/* ───────── 豆腐: ソースに着地する drop-in ───────── */
 
-@keyframes pop-in {
-  0%   { transform: translate(-50%, -50%) scale(0)    rotate(var(--rot, 0deg)); opacity: 0; }
-  60%  { transform: translate(-50%, -50%) scale(1.04) rotate(var(--rot, 0deg)); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(1)    rotate(var(--rot, 0deg)); opacity: 1; }
+@keyframes drop-in {
+  0% {
+    transform: translate(-50%, calc(-50% - 40px)) scale(0.55) rotate(var(--rot, 0deg));
+    opacity: 0;
+    filter: blur(2px);
+  }
+  35% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  55% {
+    /* 着地の瞬間: 横に潰れる */
+    transform: translate(-50%, -50%) scale(1.18, 0.82) rotate(var(--rot, 0deg));
+  }
+  72% {
+    /* 軽くバウンド */
+    transform: translate(-50%, calc(-50% - 5px)) scale(0.94, 1.08) rotate(var(--rot, 0deg));
+  }
+  88% {
+    transform: translate(-50%, -50%) scale(1.03, 0.97) rotate(var(--rot, 0deg));
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(var(--rot, 0deg));
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes ripple {
+  0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.65; }
+  100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
 }
 
 .tofu {
   position: absolute;
   --rot: 0deg;
-  animation: pop-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation: drop-in 0.95s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
   pointer-events: auto;
   cursor: pointer;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
   will-change: transform;
-  perspective: 900px;
+}
+
+/* 着地の瞬間に広がるソースの波紋 */
+.tofu::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -8%;
+  width: 70%;
+  height: 18%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(232, 90, 28, 0.55) 0%, rgba(120, 40, 12, 0.3) 50%, transparent 80%);
+  transform: translate(-50%, -50%) scale(0.6);
+  animation: ripple 0.7s ease-out 0.45s backwards;
+  pointer-events: none;
+  filter: blur(3px);
 }
 
 .cube {
@@ -222,14 +287,19 @@ body::before {
   right: max(env(safe-area-inset-right), 14px);
   bottom: max(env(safe-area-inset-bottom), 14px);
   font-family: 'Noto Serif JP', 'Yu Mincho', 'Hiragino Mincho ProN', serif;
-  font-weight: 200;
+  font-weight: 300;
   font-size: 11px;
   letter-spacing: 0.42em;
-  color: rgba(245, 230, 200, 0.6);
+  padding: 7px 14px 7px 18px;
+  border-radius: 999px;
+  color: rgba(245, 230, 200, 0.85);
+  background: rgba(20, 6, 2, 0.55);
+  backdrop-filter: blur(8px) saturate(0.85);
+  -webkit-backdrop-filter: blur(8px) saturate(0.85);
+  border: 1px solid rgba(245, 230, 200, 0.10);
   pointer-events: none;
   user-select: none;
   z-index: 10;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 /* ───────── reduced motion ───────── */

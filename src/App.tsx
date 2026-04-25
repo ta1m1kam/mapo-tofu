@@ -3,12 +3,12 @@ import { Bowl, type Tofu } from './components/Bowl';
 
 const HUES: Tofu['hue'][] = ['cream', 'gold', 'pink'];
 const SPAWN_INTERVAL_MS = 600;
-const MAX_VISIBLE_TOFU  = 140;
+const MAX_VISIBLE_TOFU  = 90;
 const SHAKE_THRESHOLD = 26;     // m/s² — needs a real shake, not just a tilt
 const SHAKE_COOLDOWN = 900;
 
 function randomTofu(id: number): Tofu {
-  const size = 42 + Math.random() * 64;
+  const size = 90 + Math.random() * 130;        // 大ぶり: 90〜220px
   return {
     id,
     x: Math.random() * 100,
