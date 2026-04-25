@@ -215,6 +215,23 @@ body::before {
   margin: 0 auto;
 }
 
+/* ───────── 右下のラベル ───────── */
+
+.corner-label {
+  position: fixed;
+  right: max(env(safe-area-inset-right), 14px);
+  bottom: max(env(safe-area-inset-bottom), 14px);
+  font-family: 'Noto Serif JP', 'Yu Mincho', 'Hiragino Mincho ProN', serif;
+  font-weight: 200;
+  font-size: 11px;
+  letter-spacing: 0.42em;
+  color: rgba(245, 230, 200, 0.6);
+  pointer-events: none;
+  user-select: none;
+  z-index: 10;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
 /* ───────── reduced motion ───────── */
 
 @media (prefers-reduced-motion: reduce) {

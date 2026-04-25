@@ -99,11 +99,17 @@ export function TofuCube(props: Props): JSX.Element {
             <stop offset="0%"   stop-color={skin().right}/>
             <stop offset="100%" stop-color={skin().bottom}/>
           </linearGradient>
+          {/* シルエット裏打ち用: 上は cream、下はソース色まで馴染ませる */}
+          <linearGradient id={`g-fill-${id}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color={skin().top}/>
+            <stop offset="50%"  stop-color={skin().left}/>
+            <stop offset="100%" stop-color={skin().bottom}/>
+          </linearGradient>
         </defs>
 
-        {/* 裏打ち: シルエット全体を fill 色で塗りつぶし。
-            各面の角を丸めることで生じる隙間を埋める。 */}
-        <path d={silhouettePath} fill={skin().fill}/>
+        {/* 裏打ち: シルエット全体を gradient で。各面の rounded corner で
+            生じる隙間に同色帯が透けるので継ぎ目が見えない。 */}
+        <path d={silhouettePath} fill={`url(#g-fill-${id})`}/>
 
         {/* 3 visible faces, each with rounded corners */}
         <path d={topPath}   fill={`url(#g-top-${id})`}/>

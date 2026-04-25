@@ -3,7 +3,7 @@ import { Bowl, type Tofu } from './components/Bowl';
 
 const HUES: Tofu['hue'][] = ['cream', 'gold', 'pink'];
 const SPAWN_INTERVAL_MS = 600;
-const MAX_VISIBLE_TOFU = 140;
+const MAX_VISIBLE_TOFU  = 140;
 const SHAKE_THRESHOLD = 26;     // m/s² — needs a real shake, not just a tilt
 const SHAKE_COOLDOWN = 900;
 
@@ -98,6 +98,7 @@ export function App() {
   return (
     <div class="relative h-full w-full" onClick={tap}>
       <Bowl tofus={tofus} />
+      <span class="corner-label">麻婆豆腐増殖</span>
     </div>
   );
 }
