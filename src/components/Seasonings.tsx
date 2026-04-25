@@ -8,6 +8,8 @@ type Particle = {
   delay: number;
 };
 
+type Blob = Particle & { w: number; h: number };
+
 function rand(min: number, max: number) {
   return min + Math.random() * (max - min);
 }
@@ -22,6 +24,18 @@ function makeParticles(count: number): Particle[] {
   }));
 }
 
+function makeBlobs(count: number): Blob[] {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    x: rand(0, 100),
+    y: rand(0, 100),
+    w: rand(120, 260),
+    h: rand(80, 200),
+    rot: rand(0, 360),
+    delay: rand(0, 12),
+  }));
+}
+
 /**
  * 麻婆豆腐 ambient seasoning particles. Static positions; very subtle.
  *  - 花椒 (huajiao):  small dark specks
@@ -30,10 +44,12 @@ function makeParticles(count: number): Particle[] {
  *  - steam:           rising wisps from bottom
  */
 export function Seasonings() {
-  // huajiao は挽肉粒に転用、negi はほぼ排除
-  const [huajiao] = createSignal(makeParticles(48));
-  const [layu]    = createSignal(makeParticles(8));
-  const [negi]    = createSignal(makeParticles(0));
+  // 挽肉 (huajiao 流用) を多めに、ソース blob を追加、唐辛子フレークを追加
+  const [sauceBlobs] = createSignal(makeBlobs(7));
+  const [huajiao]    = createSignal(makeParticles(72));
+  const [layu]       = createSignal(makeParticles(14));
+  const [chiliFlakes]= createSignal(makeParticles(18));
+  const [negi]       = createSignal(makeParticles(0));
 
   // steam comes from random bottom positions, recycled
   const STEAM_COUNT = 6;
@@ -57,6 +73,23 @@ export function Seasonings() {
 
   return (
     <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* ソースの大きな水たまり (一番奥) */}
+      <For each={sauceBlobs()}>
+        {(b) => (
+          <span
+            class="sauce-blob"
+            style={{
+              left: `${b.x}%`,
+              top:  `${b.y}%`,
+              width:  `${b.w}px`,
+              height: `${b.h}px`,
+              transform: `translate(-50%, -50%) rotate(${b.rot}deg)`,
+              'animation-delay': `${b.delay}s`,
+            }}
+          />
+        )}
+      </For>
+
       <For each={huajiao()}>
         {(p) => (
           <span
@@ -66,6 +99,22 @@ export function Seasonings() {
               top: `${p.y}%`,
               '--r': `${p.rot}deg`,
               'animation-delay': `${p.delay}s`,
+              transform: `rotate(${p.rot}deg)`,
+            } as never}
+          />
+        )}
+      </For>
+
+      <For each={chiliFlakes()}>
+        {(p) => (
+          <span
+            class="chili-flake"
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              '--r': `${p.rot}deg`,
+              'animation-delay': `${p.delay}s`,
+              transform: `rotate(${p.rot}deg)`,
             } as never}
           />
         )}

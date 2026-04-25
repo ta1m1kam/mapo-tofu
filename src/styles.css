@@ -225,6 +225,31 @@ body::before {
   margin: 0 auto;
 }
 
+/* ───────── 豆腐の表面に付く粒 ───────── */
+
+.tofu-speck {
+  position: absolute;
+  pointer-events: none;
+}
+
+.speck-meat {
+  background:
+    radial-gradient(ellipse at 30% 30%, #6b3920 0%, #3a1f0a 60%, #1a0a04 100%);
+  box-shadow:
+    inset -1px -1px 1px rgba(0,0,0,0.4),
+    inset 1px 1px 1px rgba(255,200,150,0.15),
+    0 0 0 0.5px rgba(0,0,0,0.4);
+  filter: blur(0.2px);
+}
+
+.speck-oil {
+  background:
+    radial-gradient(circle at 30% 30%, #d97648 0%, #b8401c 55%, #5a1d0a 100%);
+  box-shadow:
+    0 0 3px rgba(184, 64, 28, 0.4),
+    inset -0.5px -0.5px 1px rgba(0,0,0,0.3);
+}
+
 /* ───────── 麻婆豆腐の薬味: 花椒・辣油・葱・湯気 ───────── */
 
 @keyframes float-y {
@@ -240,35 +265,64 @@ body::before {
 
 .huajiao,
 .layu,
-.negi {
+.negi,
+.sauce-blob,
+.chili-flake {
   position: absolute;
   pointer-events: none;
-  filter: blur(0.4px);
   animation: float-y 7s ease-in-out infinite;
 }
 
-/* 挽肉 — ソースに混ざる小さな焦げ茶の塊 (旧 huajiao を肉粒に転用) */
+/* 挽肉 — ソースに混ざる焦げ茶の塊（サイズ・形状を不揃いに） */
 .huajiao {
-  width: 7px;
-  height: 5px;
-  border-radius: 50% 40% 60% 50% / 50% 60% 40% 50%;
+  width: 9px;
+  height: 6px;
+  border-radius: 55% 45% 60% 40% / 55% 60% 40% 45%;
   background:
-    radial-gradient(ellipse at 30% 30%, #6b3920 0%, var(--meat) 60%, #1f0f04 100%);
+    radial-gradient(ellipse at 30% 30%, #7a4a25 0%, var(--meat) 55%, #1a0a04 100%);
   box-shadow:
-    inset -1px -1px 1px rgba(0,0,0,0.4),
-    0 0 0 0.5px rgba(0,0,0,0.5);
+    inset -1px -1px 1px rgba(0,0,0,0.5),
+    inset 1px 1px 1px rgba(255,200,150,0.12),
+    0 0 0 0.5px rgba(0,0,0,0.5),
+    0 1px 2px rgba(0,0,0,0.4);
+  filter: blur(0.3px);
 }
 
-/* 辣油の油溜まり — 控えめなソースの色 */
+/* 辣油の油溜まり */
 .layu {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 30% 30%, #c66738 0%, var(--chili) 60%, #5a1d0a 100%);
+    radial-gradient(circle at 30% 30%, #d97648 0%, var(--chili) 55%, #4a1a08 100%);
   box-shadow:
-    0 0 5px rgba(184, 64, 28, 0.45),
-    0 0 10px rgba(160, 56, 20, 0.18);
+    0 0 6px rgba(200, 80, 32, 0.55),
+    0 0 14px rgba(180, 64, 28, 0.25);
+  filter: blur(0.3px);
+}
+
+/* 唐辛子フレーク — 小さな赤橙の細片 */
+.chili-flake {
+  width: 9px;
+  height: 3px;
+  border-radius: 60% 40% 50% 50% / 50%;
+  background: linear-gradient(135deg, #e85a1c 0%, #b8401c 60%, #6a1a08 100%);
+  box-shadow:
+    inset 0 -1px 1px rgba(0,0,0,0.4),
+    0 0 0 0.4px rgba(0,0,0,0.4),
+    0 0 4px rgba(232,90,28,0.3);
+  filter: blur(0.2px);
+}
+
+/* ソースの溜まり — 大きく不規則な茶色の水たまり */
+.sauce-blob {
+  border-radius: 55% 45% 60% 40% / 50% 60% 40% 50%;
+  background:
+    radial-gradient(ellipse at 35% 30%, rgba(122, 62, 22, 0.55) 0%, rgba(74, 40, 16, 0.5) 50%, rgba(40, 22, 10, 0.55) 100%);
+  filter: blur(8px);
+  animation: oil-drift 30s ease-in-out infinite alternate;
+  /* sauce 用途では float-y は要らないので上書き */
+  opacity: 0.7;
 }
 
 /* 葱は使わないが互換性のため残置 */
