@@ -23,13 +23,16 @@ type Props = {
   onCelebration?: (text: string) => void;
 };
 
-const SPARKLE_EMOJIS = ['✨', '🌟', '💫', '🍀', '🌶️', '🪄', '⭐', '💖'];
-const FLOAT_COLORS   = ['#fff', '#fbe04e', '#ffe0e0', '#aef0a8', '#ffd166'];
-const CONFETTI_EMOJIS = ['🌶️', '✨', '💖', '🌟', '🎉', '🎊', '⭐', '🍀', '🥢', '🥬'];
-const DRIFTER_EMOJIS  = ['🌶️', '🥬', '🥢', '🧄', '🧅'];
-const TWINKLE_EMOJIS  = ['✦', '✧', '⋆', '⁂', '✸'];
+const SPARKLE_EMOJIS = ['✨', '🌟', '💫', '🍀', '🌶️', '🪄', '⭐', '💖', '🧧', '🏮'];
+const FLOAT_COLORS   = ['#fff7e6', '#ffe066', '#ffd166', '#ffb5b5', '#aef0a8'];
+const CONFETTI_EMOJIS = ['🌶️', '✨', '💖', '🌟', '🎉', '🎊', '⭐', '🧧', '🏮', '🥟', '🥢'];
+const DRIFTER_EMOJIS  = ['🌶️', '🥬', '🥢', '🧄', '🧅', '🥟', '🍵', '🐼'];
+const TWINKLE_EMOJIS  = ['✦', '✧', '⋆', '⁂', '✸', '❋', '✺'];
 
-const POP_MESSAGES = ['ぽよん', 'ぷるるん', 'もちもち', '増えた！', 'まだまだ！', 'うまそう', 'プニッ', 'ピリッ', 'ふるふる'];
+const POP_MESSAGES = [
+  'ぽよん', 'ぷるるん', 'もちもち', '増えた！', 'まだまだ！',
+  '美味!', '真香!', '好吃!', '麻!', '辣!', 'ピリッ', 'ふるふる',
+];
 const MILESTONES: Record<number, string> = {
   10:   '10こ目！',
   25:   '25こ突破！',
@@ -184,6 +187,7 @@ export function Bowl(props: Props) {
             y={t.y}
             hue={t.hue}
             spinSpeed={t.spinSpeed}
+            seed={t.id}
           />
         )}
       </For>

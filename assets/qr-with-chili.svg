@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1350 1350" width="1350" height="1350">
+  <image xlink:href="qr.png" x="0" y="0" width="1350" height="1350" image-rendering="pixelated"/>
+  <!-- white panel + soft red ring (decorative, still within H-level error correction) -->
+  <circle cx="675" cy="675" r="190" fill="#ffffff"/>
+  <circle cx="675" cy="675" r="190" fill="none" stroke="#d63031" stroke-width="6" stroke-dasharray="14 6"/>
+  <image xlink:href="chili.svg" x="525" y="525" width="300" height="300"/>
+</svg>

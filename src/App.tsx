@@ -8,15 +8,17 @@ const MAX_VISIBLE_TOFU = 240;
 const TITLE = '麻婆豆腐';
 
 function randomTofu(id: number): Tofu {
-  const size = 40 + Math.random() * 60;
+  const size = 50 + Math.random() * 50; // 50~100, slightly bigger for face readability
   return {
     id,
     x: 8 + Math.random() * 84,
-    y: 8 + Math.random() * 84,
+    y: 10 + Math.random() * 80,
     size,
-    rotation: (Math.random() - 0.5) * 30,
+    // keep faces upright-ish
+    rotation: (Math.random() - 0.5) * 18,
     hue: HUES[Math.floor(Math.random() * HUES.length)],
-    spinSpeed: Math.random() < 0.4 ? 4 + Math.random() * 8 : 0,
+    // no continuous spin — would hide the face
+    spinSpeed: 0,
     bornAt: performance.now(),
   };
 }
@@ -25,7 +27,6 @@ export function App() {
   const [tofus, setTofus] = createSignal<Tofu[]>([]);
   const [running, setRunning] = createSignal(true);
   const [highlight, setHighlight] = createSignal(false);
-  const [latestPop, setLatestPop] = createSignal<number>(0);
 
   let nextId = 1;
   let intervalId: ReturnType<typeof setInterval> | undefined;
@@ -37,7 +38,6 @@ export function App() {
       return next;
     });
     setHighlight(true);
-    setLatestPop(performance.now());
     setTimeout(() => setHighlight(false), 380);
   }
 
@@ -60,13 +60,8 @@ export function App() {
     start();
   }
 
-  function toggle() {
-    running() ? stop() : start();
-  }
-
-  function tap() {
-    spawnOne();
-  }
+  function toggle() { running() ? stop() : start(); }
+  function tap() { spawnOne(); }
 
   onMount(() => {
     start();
@@ -78,21 +73,32 @@ export function App() {
 
   return (
     <div class="h-full w-full flex flex-col" onClick={tap}>
-      <header class="relative z-10 px-6 pt-[max(env(safe-area-inset-top),20px)] pb-3 text-center">
-        <h1 class="title text-[clamp(2.4rem,11vw,4rem)] leading-none">
+      {/* corner stamps 福/喜 */}
+      <div class="stamp stamp-tl" aria-hidden>福</div>
+      <div class="stamp stamp-br" aria-hidden>喜</div>
+
+      {/* swinging lanterns */}
+      <span class="lantern lantern-l" aria-hidden>🏮</span>
+      <span class="lantern lantern-r" aria-hidden>🏮</span>
+
+      {/* dragon flyover */}
+      <span class="dragon" aria-hidden>🐲</span>
+
+      <header class="relative z-10 px-6 pt-[max(env(safe-area-inset-top),28px)] pb-2 text-center">
+        <h1 class="title text-[clamp(2.6rem,12vw,4.6rem)] leading-none">
           <For each={[...TITLE]}>
             {(ch, i) => (
               <span
-                class="title-char"
-                classList={{ 'title-rainbow': i() === 1 || i() === 3 }}
-                style={{ 'animation-delay': `${i() * 0.12}s` }}
+                class={`title-char title-char-${i() + 1}`}
+                style={{ 'animation-delay': `${i() * 0.13}s` }}
               >
                 {ch}
               </span>
             )}
           </For>
         </h1>
-        <p class="mt-2 text-sm sm:text-base opacity-90">
+        <div class="pinyin mt-2">mápó dòufu</div>
+        <p class="mt-1 text-sm sm:text-base opacity-90 font-rounded">
           豆腐がどんどん増えるよ 🌶️
         </p>
       </header>
@@ -100,16 +106,15 @@ export function App() {
       <Bowl tofus={tofus} />
 
       <footer
-        class="relative z-10 px-6 pb-[max(env(safe-area-inset-bottom),24px)] pt-3 flex flex-col items-center gap-3"
+        class="relative z-10 px-6 pb-[max(env(safe-area-inset-bottom),28px)] pt-3 flex flex-col items-center gap-3"
         onClick={(e) => e.stopPropagation()}
       >
         <div class="text-center">
-          <div class="text-xs opacity-90 tracking-[0.4em]">TOFU COUNT</div>
+          <div class="text-xs opacity-90 tracking-[0.42em] font-rounded">
+            <span style={{ color: '#ffe066' }}>·</span> TOFU COUNT <span style={{ color: '#ffe066' }}>·</span>
+          </div>
           <div class="flex items-baseline gap-2 justify-center mt-1">
-            <span
-              class={`counter-num text-[clamp(2.6rem,13vw,4.4rem)] leading-none ${highlight() ? 'pop' : ''}`}
-              data-pop={latestPop()}
-            >
+            <span class={`counter-num text-[clamp(2.6rem,13vw,4.4rem)] leading-none ${highlight() ? 'pop' : ''}`}>
               {count()}
             </span>
             <span class="text-base opacity-90">こ</span>
@@ -123,11 +128,7 @@ export function App() {
           <button class="btn-pop" onClick={toggle}>
             {running() ? '⏸ 止める' : '▶ もっと'}
           </button>
-          <button
-            class="btn-pop"
-            onClick={reset}
-            style={{ background: 'linear-gradient(180deg, #ffe0e0 0%, #ff8a8a 100%)' }}
-          >
+          <button class="btn-pop alt" onClick={reset}>
             🌶 最初から
           </button>
         </div>

@@ -1,7 +1,12 @@
 :root {
-  --sauce-1: #ff5252;
-  --sauce-2: #d63031;
-  --sauce-3: #8b1a1a;
+  --red-1:  #ff5252;
+  --red-2:  #d63031;
+  --red-3:  #8b1a1a;
+  --red-4:  #5a0e0e;
+  --gold-1: #ffe066;
+  --gold-2: #d4af37;
+  --gold-3: #8b6914;
+  --cream:  #fff7e6;
   --tofu-1: #fffbe8;
   --tofu-2: #fff0a8;
   --tofu-3: #d6b246;
@@ -18,11 +23,16 @@ html, body {
   padding: 0;
   overflow: hidden;
   background:
+    /* 福 character watermark — top-left */
+    radial-gradient(circle at 12% 18%, rgba(255, 224, 102, 0.18) 0%, transparent 18%),
+    /* 喜 watermark — bottom-right */
+    radial-gradient(circle at 86% 88%, rgba(255, 224, 102, 0.12) 0%, transparent 22%),
+    /* main pop red */
     radial-gradient(circle at 20% 0%,   #ff8a8a 0%, transparent 60%),
-    radial-gradient(circle at 80% 100%, #b71c1c 0%, transparent 70%),
-    linear-gradient(135deg, #ff5252 0%, #d63031 50%, #8b1a1a 100%);
-  background-size: 200% 200%, 200% 200%, 200% 200%;
-  animation: bg-shift 12s ease-in-out infinite alternate;
+    radial-gradient(circle at 80% 100%, #8b1a1a 0%, transparent 70%),
+    linear-gradient(135deg, #ff5252 0%, #d63031 50%, #5a0e0e 100%);
+  background-size: 220% 220%, 220% 220%, 200% 200%, 200% 200%, 200% 200%;
+  animation: bg-shift 14s ease-in-out infinite alternate;
   font-family: 'M PLUS Rounded 1c', system-ui, sans-serif;
   font-weight: 700;
   color: #fff;
@@ -30,10 +40,37 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* gold cloud border at top and bottom (祥雲) */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  left: 0; right: 0;
+  height: 14px;
+  z-index: 5;
+  background-image:
+    radial-gradient(circle at 5% 50%, var(--gold-1) 0 4px, transparent 5px),
+    radial-gradient(circle at 15% 50%, var(--gold-1) 0 4px, transparent 5px),
+    radial-gradient(circle at 25% 50%, var(--gold-1) 0 4px, transparent 5px),
+    radial-gradient(circle at 35% 50%, var(--gold-1) 0 4px, transparent 5px),
+    radial-gradient(circle at 45% 50%, var(--gold-1) 0 4px, transparent 5px),
+    radial-gradient(circle at 55% 50%, var(--gold-1) 0 4px, transparent 5px),
+    radial-gradient(circle at 65% 50%, var(--gold-1) 0 4px, transparent 5px),
+    radial-gradient(circle at 75% 50%, var(--gold-1) 0 4px, transparent 5px),
+    radial-gradient(circle at 85% 50%, var(--gold-1) 0 4px, transparent 5px),
+    radial-gradient(circle at 95% 50%, var(--gold-1) 0 4px, transparent 5px),
+    linear-gradient(to bottom, transparent 0, transparent 6px, var(--gold-2) 6px, var(--gold-2) 8px, transparent 8px);
+  background-size: auto, auto, auto, auto, auto, auto, auto, auto, auto, auto, 100% 100%;
+  pointer-events: none;
+  opacity: 0.75;
+}
+body::before { top: 0; }
+body::after  { bottom: 0; transform: scaleY(-1); }
+
 @keyframes bg-shift {
-  0%   { background-position:   0% 0%,   0% 0%,   0% 0%; }
-  50%  { background-position: 100% 50%, 100% 50%, 50% 50%; }
-  100% { background-position:   0% 100%, 50% 100%, 100% 100%; }
+  0%   { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%; }
+  50%  { background-position: 100% 100%, 100% 0%, 100% 50%, 100% 50%, 50% 50%; }
+  100% { background-position: 0% 100%, 50% 100%, 0% 100%, 50% 100%, 100% 100%; }
 }
 
 #root {
@@ -42,7 +79,7 @@ html, body {
   flex-direction: column;
 }
 
-/* ───────── tofu animations ───────── */
+/* ───────── tofu ───────── */
 
 @keyframes pop-in {
   0%   { transform: translate(-50%, -50%) scale(0)    rotate(var(--rot, 0deg)); }
@@ -54,43 +91,41 @@ html, body {
 @keyframes wobble {
   0%, 100% { transform: translate(-50%, -50%) rotate(var(--rot, 0deg))                 translateY(0); }
   25%      { transform: translate(-50%, -50%) rotate(calc(var(--rot, 0deg) + 4deg))    translateY(-3px); }
-  50%      { transform: translate(-50%, -50%) rotate(var(--rot, 0deg))                 translateY(-6px); }
+  50%      { transform: translate(-50%, -50%) rotate(var(--rot, 0deg))                 translateY(-7px); }
   75%      { transform: translate(-50%, -50%) rotate(calc(var(--rot, 0deg) - 4deg))    translateY(-3px); }
 }
 
-@keyframes spin-slow {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin-slow { to { transform: rotate(360deg); } }
 
 @keyframes squish {
   0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.15, 0.85); }
+  50%      { transform: scale(1.18, 0.82); }
 }
 
-/* ───────── particle / sparkle ───────── */
+/* ───────── particles ───────── */
 
 @keyframes sparkle-out {
-  0%   { transform: translate(-50%, -50%) scale(0)   rotate(0);    opacity: 0; }
+  0%   { transform: translate(-50%, -50%) scale(0)   rotate(0);     opacity: 0; }
   30%  { transform: translate(-50%, -50%) scale(1.4) rotate(60deg); opacity: 1; }
   100% { transform: translate(-50%, -50%) scale(0)   rotate(220deg); opacity: 0; }
 }
 
 @keyframes drift-up {
-  from { transform: translate(-50%, 0) rotate(0)        scale(0.6); opacity: 0; }
-  20%  {                                                            opacity: 1; }
+  from { transform: translate(-50%, 0)     rotate(0)    scale(0.6); opacity: 0; }
+  20%  { opacity: 1; }
   60%  { transform: translate(-50%, -90px) rotate(15deg) scale(1.1); }
-  to   { transform: translate(-50%, -160px) rotate(20deg) scale(0.9); opacity: 0; }
+  to   { transform: translate(-50%,-160px) rotate(20deg) scale(0.9); opacity: 0; }
 }
 
 @keyframes confetti-fall {
-  0%   { transform: translate(-50%, -100vh) rotate(0deg)   scale(0); opacity: 0; }
-  10%  {                                                            opacity: 1; }
+  0%   { transform: translate(-50%, -100vh) rotate(0)    scale(0); opacity: 0; }
+  10%  { opacity: 1; }
   100% { transform: translate(calc(-50% + var(--dx, 0px)), 110vh) rotate(720deg) scale(1); opacity: 0; }
 }
 
 @keyframes drift-side {
   0%   { transform: translateX(-30vw) translateY(0)    rotate(0); opacity: 0; }
-  10%  { opacity: 0.6; }
+  10%  { opacity: 0.65; }
   100% { transform: translateX(130vw) translateY(-20vh) rotate(180deg); opacity: 0; }
 }
 
@@ -99,54 +134,91 @@ html, body {
   50%      { opacity: 1;   transform: scale(1.2); }
 }
 
-/* ───────── title ───────── */
+/* ───────── lanterns 🏮 ───────── */
 
-@keyframes title-bounce {
-  0%, 100% { transform: rotate(-3deg) translateY(0); }
-  50%      { transform: rotate(-3deg) translateY(-8px); }
+@keyframes lantern-sway {
+  0%, 100% { transform: rotate(-8deg)  translateY(0); }
+  50%      { transform: rotate(8deg)   translateY(2px); }
 }
+
+.lantern {
+  position: absolute;
+  top: 14px;
+  font-size: clamp(28px, 7vw, 44px);
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+  animation: lantern-sway 3s ease-in-out infinite;
+  transform-origin: top center;
+  pointer-events: none;
+  z-index: 4;
+}
+.lantern-l { left: 8px; }
+.lantern-r { right: 8px; animation-delay: -1.5s; }
+
+/* ───────── dragon flyover 🐲 ───────── */
+
+@keyframes dragon-fly {
+  0%   { transform: translateX(-30vw) translateY(0)   rotate(-8deg); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translateX(50vw)  translateY(-15px) rotate(4deg); }
+  100% { transform: translateX(130vw) translateY(0)   rotate(-2deg); opacity: 0; }
+}
+
+.dragon {
+  position: absolute;
+  top: 30%;
+  font-size: clamp(40px, 10vw, 70px);
+  animation: dragon-fly 8s ease-in-out infinite;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,0.4));
+  z-index: 3;
+}
+
+/* ───────── title (calligraphy chinese) ───────── */
 
 @keyframes title-char {
-  0%, 100% { transform: translateY(0)    rotate(0deg); }
-  50%      { transform: translateY(-14px) rotate(8deg); }
+  0%, 100% { transform: translateY(0)    rotate(0deg)  scale(1); }
+  50%      { transform: translateY(-10px) rotate(6deg) scale(1.05); }
 }
 
-@keyframes rainbow-sweep {
-  0%   { background-position:   0% 50%; }
-  100% { background-position: 200% 50%; }
+@keyframes title-glow {
+  0%, 100% { text-shadow:
+    0 0 4px #fff,
+    3px 3px 0 #5a0e0e,
+    6px 6px 0 rgba(0,0,0,0.3),
+    0 0 18px rgba(255, 224, 102, 0.6); }
+  50%      { text-shadow:
+    0 0 8px #fff,
+    3px 3px 0 #5a0e0e,
+    6px 6px 0 rgba(0,0,0,0.3),
+    0 0 30px rgba(255, 224, 102, 0.95); }
 }
 
 .title {
-  font-family: 'Mochiy Pop One', 'M PLUS Rounded 1c', sans-serif;
+  font-family: 'ZCOOL XiaoWei', 'Ma Shan Zheng', 'Mochiy Pop One', serif;
   font-weight: 400;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   display: inline-flex;
-  gap: 0.05em;
-  text-shadow:
-    3px 3px 0 #8b1a1a,
-    6px 6px 0 rgba(0,0,0,0.25);
-  animation: title-bounce 2.4s ease-in-out infinite;
-  transform: rotate(-3deg);
+  gap: 0.04em;
+  animation: title-glow 2.6s ease-in-out infinite;
 }
 
 .title-char {
   display: inline-block;
-  animation: title-char 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+  animation: title-char 1.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
   will-change: transform;
 }
 
-.title-rainbow {
-  background: linear-gradient(
-    90deg,
-    #fff7e6, #fbe04e, #ffd166, #fff,
-    #ffd166, #fbe04e, #fff7e6
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  animation: rainbow-sweep 3s linear infinite;
+.title-char-1 { color: #fff7e6; }
+.title-char-2 { color: var(--gold-1); }
+.title-char-3 { color: #fff7e6; }
+.title-char-4 { color: var(--gold-1); }
+
+.pinyin {
+  font-family: 'Long Cang', 'Ma Shan Zheng', cursive;
+  font-style: italic;
+  letter-spacing: 0.18em;
+  color: var(--gold-1);
+  font-size: clamp(14px, 3.4vw, 18px);
 }
 
 /* ───────── counter ───────── */
@@ -158,34 +230,21 @@ html, body {
   100% { transform: scale(1) rotate(0); }
 }
 
-@keyframes digit-roll {
-  0%   { transform: translateY(-100%); opacity: 0; }
-  60%  { transform: translateY(8%);    opacity: 1; }
-  100% { transform: translateY(0);     opacity: 1; }
-}
-
 .counter-num {
   display: inline-block;
-  font-family: 'Mochiy Pop One', sans-serif;
+  font-family: 'Mochiy Pop One', 'ZCOOL XiaoWei', sans-serif;
   font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-  background: linear-gradient(180deg, #fffbe8 0%, #ffd166 60%, #ff8a4a 100%);
-  background-size: 100% 220%;
+  background: linear-gradient(180deg, #fffbe8 0%, var(--gold-1) 60%, var(--gold-2) 100%);
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(2px 3px 0 #8b1a1a);
+  filter: drop-shadow(2px 3px 0 #5a0e0e);
 }
 
 .counter-num.pop { animation: counter-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-.digit {
-  display: inline-block;
-  animation: digit-roll 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* ───────── tofu / sparkle / float-text classes ───────── */
+/* ───────── sparkles / floats / tofu ───────── */
 
 .tofu {
   position: absolute;
@@ -195,7 +254,7 @@ html, body {
     wobble 3.2s ease-in-out infinite 0.65s;
   pointer-events: auto;
   cursor: pointer;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.35));
   will-change: transform;
 }
 
@@ -206,16 +265,16 @@ html, body {
   pointer-events: none;
   animation: sparkle-out 0.8s ease-out forwards;
   font-size: 26px;
-  filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+  filter: drop-shadow(0 0 6px rgba(255, 224, 102, 0.7));
 }
 
 .float-text {
   position: absolute;
   pointer-events: none;
   animation: drift-up 1.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  font-family: 'Mochiy Pop One', sans-serif;
+  font-family: 'Mochiy Pop One', 'ZCOOL XiaoWei', sans-serif;
   font-size: 22px;
-  text-shadow: 2px 2px 0 #8b1a1a, 4px 4px 0 rgba(0,0,0,0.2);
+  text-shadow: 2px 2px 0 #5a0e0e, 4px 4px 0 rgba(0,0,0,0.2);
   white-space: nowrap;
 }
 
@@ -223,15 +282,15 @@ html, body {
   position: absolute;
   top: 0;
   pointer-events: none;
-  font-size: 30px;
-  animation: confetti-fall 2.4s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  font-size: 28px;
+  animation: confetti-fall 2.6s cubic-bezier(0.4, 0, 0.6, 1) forwards;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .drift {
   position: absolute;
   pointer-events: none;
-  font-size: 30px;
+  font-size: 28px;
   opacity: 0.7;
   animation: drift-side 14s linear infinite;
 }
@@ -241,38 +300,69 @@ html, body {
   pointer-events: none;
   animation: twinkle 1.8s ease-in-out infinite;
   font-size: 16px;
+  color: var(--gold-1);
 }
 
-/* ───────── buttons ───────── */
+/* ───────── 中華 buttons ───────── */
 
 @keyframes btn-wobble {
   0%, 100% { transform: rotate(-2deg) scale(1); }
-  50%      { transform: rotate(2deg)  scale(1.04); }
+  50%      { transform: rotate(2deg)  scale(1.05); }
 }
 
 .btn-pop {
-  background: linear-gradient(180deg, #fffbe8 0%, #ffe66d 100%);
-  color: #8b1a1a;
-  font-family: 'Mochiy Pop One', sans-serif;
-  border: 4px solid #8b1a1a;
+  background: linear-gradient(180deg, var(--gold-1) 0%, var(--red-2) 100%);
+  color: #fff7e6;
+  font-family: 'ZCOOL XiaoWei', 'Mochiy Pop One', sans-serif;
+  border: 4px solid var(--gold-2);
   border-radius: 999px;
-  padding: 14px 24px;
-  font-size: 17px;
+  padding: 12px 24px;
+  font-size: 16px;
+  letter-spacing: 0.08em;
   box-shadow:
-    0 6px 0 #8b1a1a,
-    0 8px 20px rgba(0,0,0,0.25);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+    0 0 0 2px var(--red-3),
+    0 6px 0 var(--red-3),
+    0 8px 20px rgba(0,0,0,0.3),
+    inset 0 2px 0 rgba(255,255,255,0.3);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
   cursor: pointer;
   animation: btn-wobble 2.6s ease-in-out infinite;
+  text-shadow: 1px 1px 0 var(--red-3);
 }
 
 .btn-pop:hover { animation-duration: 1s; }
 
 .btn-pop:active {
-  transform: translateY(4px) scale(0.95);
-  box-shadow: 0 2px 0 #8b1a1a, 0 4px 10px rgba(0,0,0,0.25);
+  transform: translateY(4px) scale(0.96);
+  box-shadow:
+    0 0 0 2px var(--red-3),
+    0 2px 0 var(--red-3),
+    0 4px 10px rgba(0,0,0,0.3);
   animation: none;
 }
+
+.btn-pop.alt {
+  background: linear-gradient(180deg, #fff7e6 0%, var(--gold-1) 100%);
+  color: var(--red-3);
+  text-shadow: 1px 1px 0 #fff;
+}
+
+/* ───────── 福 / 喜 corner stamps ───────── */
+
+.stamp {
+  position: absolute;
+  font-family: 'Ma Shan Zheng', 'ZCOOL XiaoWei', serif;
+  font-size: clamp(48px, 14vw, 92px);
+  color: var(--gold-1);
+  opacity: 0.18;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+.stamp-tl { top: 70px;  left: 8px;  transform: rotate(-12deg); }
+.stamp-br { bottom: 220px; right: 8px; transform: rotate(8deg); }
+
+/* ───────── reduced motion ───────── */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
