@@ -30,9 +30,10 @@ function makeParticles(count: number): Particle[] {
  *  - steam:           rising wisps from bottom
  */
 export function Seasonings() {
-  const [huajiao] = createSignal(makeParticles(34));
-  const [layu]    = createSignal(makeParticles(14));
-  const [negi]    = createSignal(makeParticles(18));
+  // huajiao は挽肉粒に転用、negi はほぼ排除
+  const [huajiao] = createSignal(makeParticles(48));
+  const [layu]    = createSignal(makeParticles(8));
+  const [negi]    = createSignal(makeParticles(0));
 
   // steam comes from random bottom positions, recycled
   const STEAM_COUNT = 6;
