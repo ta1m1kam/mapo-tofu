@@ -60,13 +60,6 @@ body::before {
   position: relative;
 }
 
-/* When tofus pass behind text, give the text a subtle scrim so it stays legible. */
-.text-veil {
-  text-shadow:
-    0 1px 0 rgba(0, 0, 0, 0.65),
-    0 0 12px rgba(0, 0, 0, 0.55),
-    0 0 24px rgba(26, 10, 10, 0.45);
-}
 
 /* ───────── 豆腐: 静かな pop-in ───────── */
 
@@ -110,6 +103,39 @@ body::before {
   display: block;
   border-radius: 8%;
   backface-visibility: hidden;
+  overflow: hidden; /* keep toppings within the face */
+}
+
+/* ───────── 豆腐の上の薬味 ───────── */
+
+.topping {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* 辣油 — つやのある赤い油滴 */
+.topping-oil {
+  background:
+    radial-gradient(ellipse at 28% 28%, #ff8a4a 0%, #e8431c 48%, #8b1a0c 100%);
+  box-shadow:
+    0 0 3px rgba(232, 74, 30, 0.5),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.25),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* 挽肉 — マットな焦げ茶〜茶赤の不定形塊 */
+.topping-meat {
+  background:
+    radial-gradient(ellipse at 35% 30%, #7a4220 0%, #5a2d10 55%, #3a1808 100%);
+  box-shadow:
+    inset -1px -1px 1px rgba(0, 0, 0, 0.5),
+    inset 1px 1px 1px rgba(255, 200, 150, 0.18);
+}
+
+/* 花椒 — ごく小さい黒い点 */
+.topping-sansho {
+  background: #2a1308;
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4);
 }
 
 /* All faces translate by half their thickness in 3D so they form a unit cube. */
