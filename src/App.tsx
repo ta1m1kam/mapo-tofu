@@ -1,6 +1,5 @@
 import { createSignal, onCleanup, onMount } from 'solid-js';
 import { Bowl, type Tofu } from './components/Bowl';
-import { Seasonings } from './components/Seasonings';
 
 const HUES: Tofu['hue'][] = ['cream', 'gold', 'pink'];
 const SPAWN_INTERVAL_MS = 600;
@@ -9,18 +8,16 @@ const SHAKE_THRESHOLD = 26;     // m/s² — needs a real shake, not just a tilt
 const SHAKE_COOLDOWN = 900;
 
 function randomTofu(id: number): Tofu {
-  // size を広めにばらつかせる + width/height 比率も少し崩す
-  const base = 42 + Math.random() * 64;
+  const size = 42 + Math.random() * 64;
   return {
     id,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: base,
-    // 手で切った豆腐の歪み: 縦横比 0.85〜1.18, 回転もやや強め
-    aspect: 0.85 + Math.random() * 0.33,
-    rotation: (Math.random() - 0.5) * 22,
-    rotateX: -(14 + Math.random() * 28),
-    rotateY:   12 + Math.random() * 66,
+    size,
+    aspect: 1,                                  // 立方体に戻す
+    rotation: (Math.random() - 0.5) * 18,
+    rotateX: -(16 + Math.random() * 26),
+    rotateY:   16 + Math.random() * 60,
     hue: HUES[Math.floor(Math.random() * HUES.length)],
     bornAt: performance.now(),
   };
@@ -100,7 +97,6 @@ export function App() {
 
   return (
     <div class="relative h-full w-full" onClick={tap}>
-      <Seasonings />
       <Bowl tofus={tofus} />
     </div>
   );
