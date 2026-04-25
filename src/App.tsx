@@ -1,6 +1,6 @@
 import { createSignal, onCleanup, onMount } from 'solid-js';
 import { Bowl, type Tofu } from './components/Bowl';
-import { ensureAudio, playDrop, startSizzle } from './audio';
+import { ensureAudio, playDrop, suspendAudio, resumeAudio } from './audio';
 
 const HUES: Tofu['hue'][] = ['cream', 'gold', 'pink'];
 const SPAWN_INTERVAL_MS = 600;
@@ -33,15 +33,17 @@ export function App() {
   let nextId = 1;
   let shakeBlocked = false;
 
-  function spawnOne() {
+  function spawnOne(opts?: { withSound?: boolean }) {
     const tofu = randomTofu(nextId++);
     setTofus((prev) => {
       const next = [...prev, tofu];
       if (next.length > MAX_VISIBLE_TOFU) next.shift();
       return next;
     });
-    // drop-in アニメの「着地」フレームに合わせて遅延 (~0.5s)
-    setTimeout(() => playDrop(tofu.size), 500);
+    // 自動スポーンでは無音、ユーザータップ時のみ着地音を鳴らす
+    if (opts?.withSound) {
+      setTimeout(() => playDrop(tofu.size), 500);
+    }
   }
 
   function clearAll() {
@@ -87,19 +89,28 @@ export function App() {
     // to enable AudioContext. Both done on first interaction.
     const grantOnce = () => {
       void ensureMotionPermission();
-      void ensureAudio().then(() => startSizzle());
+      void ensureAudio();
       window.removeEventListener('pointerdown', grantOnce);
     };
     window.addEventListener('pointerdown', grantOnce);
+
+    // タブが非表示の間は AudioContext を suspend (音を止める)
+    const handleVis = () => {
+      if (document.hidden) suspendAudio();
+      else                 void resumeAudio();
+    };
+    document.addEventListener('visibilitychange', handleVis);
 
     onCleanup(() => {
       clearInterval(spawnTimer);
       window.removeEventListener('devicemotion', handleMotion);
       window.removeEventListener('pointerdown', grantOnce);
+      document.removeEventListener('visibilitychange', handleVis);
+      suspendAudio();
     });
   });
 
-  function tap() { spawnOne(); }
+  function tap() { spawnOne({ withSound: true }); }
 
   return (
     <div class="relative h-full w-full" onClick={tap}>

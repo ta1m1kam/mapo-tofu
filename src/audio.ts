@@ -5,7 +5,6 @@
 
 let ctx: AudioContext | undefined;
 let masterGain: GainNode | undefined;
-let sizzleStarted = false;
 let muted = false;
 
 function getCtor(): typeof AudioContext | undefined {
@@ -76,45 +75,14 @@ export function playDrop(size: number) {
   clickOsc.stop(t + 0.1);
 }
 
-/**
- * 灼熱の sizzle: 帯域制限した白ノイズのループ。BGM 代わりの ambient。
- */
-export function startSizzle() {
-  if (!ctx || !masterGain) return;
-  if (sizzleStarted) return;
-  sizzleStarted = true;
+export function suspendAudio() {
+  if (ctx && ctx.state === 'running') {
+    void ctx.suspend();
+  }
+}
 
-  // 2 秒分の白ノイズ buffer
-  const seconds = 2;
-  const buffer = ctx.createBuffer(1, ctx.sampleRate * seconds, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.6;
-
-  const src = ctx.createBufferSource();
-  src.buffer = buffer;
-  src.loop = true;
-
-  // 低めにフィルター → 「ジュー」という油の音に
-  const lowpass = ctx.createBiquadFilter();
-  lowpass.type = 'lowpass';
-  lowpass.frequency.value = 850;
-  lowpass.Q.value = 0.6;
-
-  const highpass = ctx.createBiquadFilter();
-  highpass.type = 'highpass';
-  highpass.frequency.value = 180;
-
-  const sizzleGain = ctx.createGain();
-  sizzleGain.gain.value = 0.045;
-
-  // ゆっくり脈動させる
-  const lfo = ctx.createOscillator();
-  const lfoGain = ctx.createGain();
-  lfo.frequency.value = 0.18;
-  lfoGain.gain.value = 0.018;
-  lfo.connect(lfoGain).connect(sizzleGain.gain);
-  lfo.start();
-
-  src.connect(highpass).connect(lowpass).connect(sizzleGain).connect(masterGain);
-  src.start();
+export async function resumeAudio() {
+  if (ctx && ctx.state === 'suspended') {
+    try { await ctx.resume(); } catch { /* ignore */ }
+  }
 }
