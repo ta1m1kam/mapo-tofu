@@ -6,6 +6,7 @@ export type Tofu = {
   x: number;
   y: number;
   size: number;
+  aspect: number;
   rotation: number;
   rotateX: number;
   rotateY: number;
@@ -26,6 +27,7 @@ export function Bowl(props: Props) {
         {(t) => (
           <TofuCube
             size={t.size}
+            aspect={t.aspect}
             rotation={t.rotation}
             rotateX={t.rotateX}
             rotateY={t.rotateY}

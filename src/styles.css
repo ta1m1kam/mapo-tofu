@@ -227,6 +227,18 @@ body::before {
 
 /* ───────── 豆腐の表面に付く粒 ───────── */
 
+.sauce-coat {
+  position: absolute;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 35% 30%,
+      rgba(122, 60, 22, 0.85) 0%,
+      rgba(90, 44, 14, 0.7)  50%,
+      rgba(58, 26, 8, 0.4)   100%);
+  filter: blur(2px);
+  mix-blend-mode: multiply;
+}
+
 .tofu-speck {
   position: absolute;
   pointer-events: none;

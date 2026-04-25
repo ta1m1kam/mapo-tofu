@@ -3,6 +3,7 @@ import { For, createMemo } from 'solid-js';
 
 type Props = {
   size: number;
+  aspect: number;        // width/height ratio for the front face — 1.0 = perfect cube
   rotation: number;
   rotateX: number;
   rotateY: number;
@@ -40,28 +41,36 @@ function makeSpecks(seed: number): Speck[] {
   const r = rng(seed);
   const out: Speck[] = [];
 
-  // 挽肉 — 1-2 個、ごく小さく豆腐に "ちょっと付いている" だけ
-  const meatCount = 1 + Math.floor(r() * 2);
+  // 挽肉: 0-3 個。サイズ・形状を大きく不揃いに、たまに端っこに寄せる
+  const meatCount = Math.floor(r() * 4);
   for (let i = 0; i < meatCount; i++) {
+    const onEdge = r() < 0.45;
+    const xPos = onEdge
+      ? (r() < 0.5 ? 8 + r() * 18 : 74 + r() * 18)
+      : 18 + r() * 64;
+    const yPos = onEdge
+      ? (r() < 0.5 ? 8 + r() * 18 : 74 + r() * 18)
+      : 18 + r() * 64;
     out.push({
       kind: 'meat',
-      x: 18 + r() * 64,
-      y: 18 + r() * 64,
-      w: 6 + r() * 6,
-      h: 5 + r() * 5,
+      x: xPos,
+      y: yPos,
+      w: 7 + r() * 14,
+      h: 5 + r() * 11,
       rot: r() * 360,
-      shape: `${40 + r()*30}% ${40 + r()*30}% ${40 + r()*30}% ${40 + r()*30}%`,
+      shape: `${30 + r()*40}% ${30 + r()*40}% ${30 + r()*40}% ${30 + r()*40}% / ${30 + r()*40}% ${30 + r()*40}% ${30 + r()*40}% ${30 + r()*40}%`,
     });
   }
 
-  // 油 — 0-1 個、極稀に少量
-  if (r() < 0.55) {
+  // 油滴: 0-2 個
+  const oilCount = Math.floor(r() * 3);
+  for (let i = 0; i < oilCount; i++) {
     out.push({
       kind: 'oil',
-      x: 20 + r() * 60,
-      y: 20 + r() * 60,
-      w: 5 + r() * 4,
-      h: 4 + r() * 3,
+      x: 16 + r() * 68,
+      y: 16 + r() * 68,
+      w: 4 + r() * 5,
+      h: 3 + r() * 4,
       rot: r() * 360,
       shape: '50%',
     });
@@ -70,13 +79,39 @@ function makeSpecks(seed: number): Speck[] {
   return out;
 }
 
+type SauceCoat = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  rot: number;
+  shape: string;
+  opacity: number;
+};
+
+// 上面に流れたソースの不規則なコーティング
+function makeSauceCoats(seed: number): SauceCoat[] {
+  const r = rng(seed);
+  const count = 1 + Math.floor(r() * 2);
+  return Array.from({ length: count }, () => ({
+    x: r() * 100,
+    y: r() * 100,
+    w: 50 + r() * 70,
+    h: 30 + r() * 60,
+    rot: r() * 360,
+    shape: `${30 + r()*40}% ${30 + r()*40}% ${30 + r()*40}% ${30 + r()*40}% / ${30 + r()*40}% ${30 + r()*40}% ${30 + r()*40}% ${30 + r()*40}%`,
+    opacity: 0.2 + r() * 0.35,
+  }));
+}
+
 export function TofuCube(props: Props): JSX.Element {
   const skin = () => SKIN[props.hue ?? 'cream'];
 
   const wrapStyle = (): JSX.CSSProperties => ({
     left:  `${props.x}%`,
     top:   `${props.y}%`,
-    width:  `${props.size}px`,
+    // aspect で 横幅 を変える: 1.0 = 正方形, >1 = 横長, <1 = 縦長
+    width:  `${props.size * props.aspect}px`,
     height: `${props.size}px`,
     '--rot':  `${props.rotation}deg`,
     '--size': `${props.size}px`,
@@ -88,17 +123,36 @@ export function TofuCube(props: Props): JSX.Element {
   });
 
   const specks = createMemo(() => makeSpecks((props.seed ?? 0) * 7 + 1));
+  const coats  = createMemo(() => makeSauceCoats((props.seed ?? 0) * 17 + 5));
 
   return (
     <div class="tofu" style={wrapStyle()}>
       <div class="cube" style={cubeStyle()}>
-        {/* TOP — ソースの艶 + 控えめな挽肉粒 */}
+        {/* TOP — ソースの艶 + ランダムな垂れ + 控えめな挽肉粒 */}
         <span
           class="face top"
           style={{
             background: `linear-gradient(135deg, #ffffff 0%, ${skin().top} 50%, ${skin().side} 100%)`,
           }}
         >
+          {/* ソースの不規則コーティング */}
+          <For each={coats()}>
+            {(c) => (
+              <span
+                class="sauce-coat"
+                style={{
+                  left: `${c.x}%`,
+                  top:  `${c.y}%`,
+                  width:  `${c.w}%`,
+                  height: `${c.h}%`,
+                  'border-radius': c.shape,
+                  transform: `translate(-50%, -50%) rotate(${c.rot}deg)`,
+                  opacity: c.opacity,
+                }}
+              />
+            )}
+          </For>
+          {/* 挽肉粒・油滴 */}
           <For each={specks()}>
             {(s) => (
               <span
@@ -116,24 +170,31 @@ export function TofuCube(props: Props): JSX.Element {
           </For>
         </span>
 
-        {/* FRONT — 下部にソースが垂れた茶色のグラデ */}
+        {/* FRONT — 下半分にソースが垂れた茶色のグラデ */}
         <span
           class="face front"
           style={{
-            background: `linear-gradient(180deg, ${skin().top} 0%, ${skin().side} 55%, #b8884a 100%)`,
+            background: `linear-gradient(180deg, ${skin().top} 0%, ${skin().side} 50%, #b8884a 100%)`,
           }}
         />
-        {/* RIGHT — 飴色寄り、下に沈んだソース感 */}
+        {/* RIGHT */}
         <span
           class="face right"
+          style={{
+            background: `linear-gradient(180deg, ${skin().side} 0%, #c89858 60%, #8a5a2c 100%)`,
+          }}
+        />
+        {/* LEFT */}
+        <span
+          class="face left"
           style={{
             background: `linear-gradient(180deg, ${skin().side} 0%, #c89858 65%, #8a5a2c 100%)`,
           }}
         />
-        {/* 残り3面: 単色 cream */}
-        <span class="face bottom" style={{ background: '#8a5a2c' }}/>
-        <span class="face back"   style={{ background: skin().side }}/>
-        <span class="face left"   style={{ background: `linear-gradient(180deg, ${skin().side} 0%, #c89858 70%, #8a5a2c 100%)` }}/>
+        {/* BOTTOM — ソースに浸かっている */}
+        <span class="face bottom" style={{ background: '#7a4a1c' }}/>
+        {/* BACK */}
+        <span class="face back" style={{ background: skin().side }}/>
       </div>
     </div>
   );

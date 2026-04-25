@@ -9,15 +9,18 @@ const SHAKE_THRESHOLD = 26;     // m/s² — needs a real shake, not just a tilt
 const SHAKE_COOLDOWN = 900;
 
 function randomTofu(id: number): Tofu {
-  const size = 50 + Math.random() * 50;
+  // size を広めにばらつかせる + width/height 比率も少し崩す
+  const base = 42 + Math.random() * 64;
   return {
     id,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size,
-    rotation: (Math.random() - 0.5) * 14,
-    rotateX: -(18 + Math.random() * 22),
-    rotateY:   20 + Math.random() * 50,
+    size: base,
+    // 手で切った豆腐の歪み: 縦横比 0.85〜1.18, 回転もやや強め
+    aspect: 0.85 + Math.random() * 0.33,
+    rotation: (Math.random() - 0.5) * 22,
+    rotateX: -(14 + Math.random() * 28),
+    rotateY:   12 + Math.random() * 66,
     hue: HUES[Math.floor(Math.random() * HUES.length)],
     bornAt: performance.now(),
   };
