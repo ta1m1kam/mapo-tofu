@@ -17,9 +17,11 @@ type Props = {
   tofus: () => Tofu[];
 };
 
+// Bowl is an absolute-fill backdrop spanning the entire viewport.
+// Tofus can land anywhere on the page (header & footer overlay on top via z-index).
 export function Bowl(props: Props) {
   return (
-    <div class="relative flex-1 w-full overflow-hidden">
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
       <For each={props.tofus()}>
         {(t) => (
           <TofuCube

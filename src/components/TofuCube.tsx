@@ -14,10 +14,12 @@ type Props = {
   seed?: number;
 };
 
-const SKIN: Record<NonNullable<Props['hue']>, { top: string; side: string; back: string }> = {
-  cream: { top: '#fdf8e8', side: '#ebdcb6', back: '#9d8a5a' },
-  gold:  { top: '#fff5d0', side: '#ecd49a', back: '#9c7c45' },
-  pink:  { top: '#fff1ea', side: '#e9cfc4', back: '#9d6f5e' },
+// すべての面を白〜ごく薄い cream の単色に。コーナー (border-radius) から
+// 暗色が透けないよう、グラデーションも darker stop も排除。
+const SKIN: Record<NonNullable<Props['hue']>, { top: string; side: string }> = {
+  cream: { top: '#ffffff', side: '#fbf6e6' },
+  gold:  { top: '#fffef0', side: '#fff5d6' },
+  pink:  { top: '#fffaf6', side: '#fff0e8' },
 };
 
 export function TofuCube(props: Props): JSX.Element {
@@ -40,30 +42,13 @@ export function TofuCube(props: Props): JSX.Element {
   return (
     <div class="tofu" style={wrapStyle()}>
       <div class="cube" style={cubeStyle()}>
-        <span
-          class="face top"
-          style={{ background: `linear-gradient(135deg, #ffffff 0%, ${skin().top} 60%, ${skin().side} 100%)` }}
-        />
-        <span
-          class="face bottom"
-          style={{ background: skin().back }}
-        />
-        <span
-          class="face front"
-          style={{ background: `linear-gradient(180deg, ${skin().top} 0%, ${skin().side} 100%)` }}
-        />
-        <span
-          class="face back"
-          style={{ background: skin().back }}
-        />
-        <span
-          class="face left"
-          style={{ background: `linear-gradient(90deg, ${skin().back} 0%, ${skin().side} 100%)` }}
-        />
-        <span
-          class="face right"
-          style={{ background: `linear-gradient(270deg, ${skin().back} 0%, ${skin().side} 100%)` }}
-        />
+        {/* 全 6 面 単色 (light cream)。コーナーから透ける色も全部白系。 */}
+        <span class="face top"    style={{ background: skin().top  }}/>
+        <span class="face bottom" style={{ background: skin().side }}/>
+        <span class="face front"  style={{ background: skin().top  }}/>
+        <span class="face back"   style={{ background: skin().side }}/>
+        <span class="face left"   style={{ background: skin().side }}/>
+        <span class="face right"  style={{ background: skin().side }}/>
       </div>
     </div>
   );
