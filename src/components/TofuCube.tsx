@@ -11,11 +11,11 @@ type Props = {
   seed?: number;
 };
 
-const SKIN: Record<NonNullable<Props['hue']>, { top: string; bottom: string }> = {
-  // 純白系・ほぼ等しい彩度。差は極わずかに留める（philosophical = 静か）
-  cream: { top: '#ffffff', bottom: '#efe6cf' },
-  gold:  { top: '#fffdf3', bottom: '#e7d8a8' },
-  pink:  { top: '#fffafa', bottom: '#ecd9d2' },
+// Isometric face palettes — stroke-less; depth comes purely from face shading.
+const SKIN: Record<NonNullable<Props['hue']>, { top: string; left: string; right: string }> = {
+  cream: { top: '#fdf8e8', left: '#ebe0bf', right: '#bda77a' },
+  gold:  { top: '#fff5d6', left: '#ecd49a', right: '#a98855' },
+  pink:  { top: '#fff1ea', left: '#e9cfc4', right: '#b88577' },
 };
 
 export function TofuCube(props: Props): JSX.Element {
@@ -45,29 +45,37 @@ export function TofuCube(props: Props): JSX.Element {
       <div style={innerStyle()}>
         <svg viewBox="0 0 100 100" width="100%" height="100%" overflow="visible">
           <defs>
-            <filter id={`s-${seed()}`} x="-40%" y="-40%" width="180%" height="180%">
-              <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#1a0405" flood-opacity="0.45"/>
+            <filter id={`s-${seed()}`} x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#0a0202" flood-opacity="0.5"/>
             </filter>
-            <linearGradient id={`g-${seed()}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stop-color={skin().top} />
-              <stop offset="100%" stop-color={skin().bottom} />
+            {/* gradients to give each face a subtle in-face shading */}
+            <linearGradient id={`gt-${seed()}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color={skin().top} stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id={`gl-${seed()}`} x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color={skin().left} stop-opacity="1"/>
+              <stop offset="100%" stop-color="#000000"     stop-opacity="0.08"/>
+            </linearGradient>
+            <linearGradient id={`gr-${seed()}`} x1="1" y1="0" x2="0" y2="0">
+              <stop offset="0%"   stop-color={skin().right} stop-opacity="1"/>
+              <stop offset="100%" stop-color="#000000"      stop-opacity="0.0"/>
             </linearGradient>
           </defs>
 
-          {/* 唯一の要素 — 角丸の白い豆腐 */}
-          <rect
-            x="8" y="10" width="84" height="80" rx="6" ry="6"
-            fill={`url(#g-${seed()})`}
-            filter={`url(#s-${seed()})`}
-          />
-          {/* 1px 内側の罫線、ごく弱く（あるかなしか） */}
-          <rect
-            x="8" y="10" width="84" height="80" rx="6" ry="6"
-            fill="none"
-            stroke="#000"
-            stroke-opacity="0.06"
-            stroke-width="1"
-          />
+          <g filter={`url(#s-${seed()})`}>
+            {/* TOP face */}
+            <polygon points="50,12 90,35 50,58 10,35" fill={skin().top}/>
+            <polygon points="50,12 90,35 50,58 10,35" fill={`url(#gt-${seed()})`}/>
+
+            {/* LEFT face */}
+            <polygon points="10,35 50,58 50,92 10,69" fill={skin().left}/>
+            <polygon points="10,35 50,58 50,92 10,69" fill={`url(#gl-${seed()})`}/>
+
+            {/* RIGHT face — darkest, gives depth */}
+            <polygon points="90,35 50,58 50,92 90,69" fill={skin().right}/>
+            <polygon points="90,35 50,58 50,92 90,69" fill={`url(#gr-${seed()})`}/>
+          </g>
         </svg>
       </div>
     </div>
